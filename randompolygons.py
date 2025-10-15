@@ -11,7 +11,7 @@ from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.PyQt.QtCore import QVariant
 from qgis.utils import iface
 from qgis.core import (
-    QgsProject, QgsVectorLayer, QgsField, QgsPointXY,
+    Qgis, QgsProject, QgsVectorLayer, QgsField, QgsPointXY,
     QgsFeature, QgsGeometry, QgsGeometryValidator,
     QgsFillSymbol, QgsSingleSymbolRenderer, QgsLayerTreeGroup, QgsExpressionContextUtils
 )
@@ -56,7 +56,8 @@ class MultiInputDialog(QDialog):
         self.cancel_button.clicked.connect(self.reject)
         self.layout.addWidget(self.ok_button)
         self.layout.addWidget(self.cancel_button)
-        self.layout.addWidget(QLabel("v0.3"))
+
+        self.layout.addWidget(QLabel("RandomPolygons v0.3 (Qt6)"))
 
     def getInputs(self):
         return (
@@ -65,7 +66,6 @@ class MultiInputDialog(QDialog):
             self.max_notvalid_polygons_input.text(),
             self.max_extent_polygons_input.text(),
         )
-
 
 class RandomPolygons:
     def __init__(self, iface):
@@ -79,6 +79,7 @@ class RandomPolygons:
         if not self.toolbar:
             self.toolbar = self.iface.addToolBar("#geoObserver Tools")
             self.toolbar.setObjectName("#geoObserverTools")
+            self.toolbar.setToolTip("#geoObserver Tools ...")
 
         # Button/Aktion erstellen
         icon = os.path.join(plugin_dir, "logo.png")
@@ -115,9 +116,7 @@ class RandomPolygons:
             print(" M4: max_extent_polygons = ", max_extent_polygons)
         else:
             print(" M0: Cancelled by user.")
-            self.iface.messageBar().pushMessage(
-                "RandomPolygons: ", "Cancelled by user.", 3, 3
-            )
+            self.iface.messageBar().pushMessage("RandomPolygons:", "Cancelled by user.", Qgis.Success, duration=3)
             return
 
         # 2) Karten-Parameter holen
@@ -269,8 +268,8 @@ class RandomPolygons:
             + str(invalid_count / len(feats) * 100)
             + "%)"
         )
-        self.iface.messageBar().pushMessage("RandomPolygons: ", myText, 3, 3)
-
+        self.iface.messageBar().pushMessage("RandomPolygons:", myText, Qgis.Success, duration=3)
+		
         endtime = time.time()
         formatted_time = time.strftime("%y.%m.%d %H:%M:%S", time.localtime(endtime))
         print(
